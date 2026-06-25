@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Control Interface | 最终交互版</title>
+    <style>
+        /* === 1. 全局设定 === */
+        :root {
+            --bg-color: #050505;
+            --text-main: #e0e0e0;
+            --accent-green: #00ff41; 
+            --accent-blue: #00d2ff;  
+            --accent-purple: #bd00ff; 
+            --glass-bg: rgba(10, 10, 10, 0.85);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            height: 100vh; width: 100vw;
+            user-select: none; /* 禁止选中文本，提升APP感 */
+        }
+
+        /* === 2. 启动页 === */
+        #uploader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .btn-upload {
+            border: 2px solid var(--accent-green); color: var(--accent-green); background: transparent;
+            padding: 15px 40px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.3s;
+            text-transform: uppercase; box-shadow: 0 0 10px var(--accent-green);
+        }
+        .btn-upload:hover { background: var(--accent-green); color: black; box-shadow: 0 0 30px var(--accent-green); }
+        .upload-btn-wrapper { position: relative; overflow: hidden; margin-top: 20px; }
+        .upload-btn-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
+
+        /* === 3. 顶部 HUD === */
+        #top-hud {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            z-index: 500; display: flex; align-items: center; padding: 0 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); display: none;
+        }
+        .hud-item { margin-right: 30px; font-size: 14px; color: #888; }
+        .hud-value { color: white; font-weight: bold; margin-left: 5px; }
+
+        /* === 4. 场景通用样式 === */
+        .stage-section {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.6s ease; z-index: 10;
+        }
+        .stage-section.active { opacity: 1; pointer-events: auto; z-index: 20; }
+        h2 { font-size: 4rem; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        .desc { font-size: 1.2rem; margin-bottom: 40px; opacity: 0.8; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 4px; z-index: 10;}
+
+        /* Phase 1: Life */
+        #phase-life { background-image: radial-gradient(#222 1px, transparent 1px); background-size: 40px 40px; }
+        #phase-life h2 { color: var(--accent-green); }
+        .scatter-container { position: relative; width: 100%; height: 70vh; }
+        .photo-card-life {
+            position: absolute; width: 240px; padding: 10px; background: white; color: black;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6); transition: transform 0.3s ease, z-index 0.3s; cursor: pointer;
